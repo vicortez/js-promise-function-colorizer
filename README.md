@@ -39,3 +39,7 @@ Example
 ## Known Issues
 
 - None ATM
+
+## Releasing
+
+`npx vsce package`
