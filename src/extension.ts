@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { logger, Logger } from './logger' // Import both the instance and class
 import { DocumentSemanticTokensProvider, legend } from './semanticTokenProvider'
 
 /**
@@ -6,31 +7,22 @@ import { DocumentSemanticTokensProvider, legend } from './semanticTokenProvider'
  * updates the editor's semantic token color customizations.
  */
 function updateColorConfiguration() {
-  // 1. Get the workspace configuration for our extension.
   const promiseConfig = vscode.workspace.getConfiguration('promiseColorizer')
-
-  // 2. Read the 'color' setting. Use the default from package.json as a fallback.
   const colorValue = promiseConfig.get<string>('color')
 
   if (!colorValue) {
-    console.error("Could not read 'promiseColorizer.color'. Using default.")
+    logger.error("Could not read 'promiseColorizer.color'. Using default.")
     return
   }
 
-  // 3. Get the configuration for the editor itself.
   const editorConfig = vscode.workspace.getConfiguration('editor')
-
-  // 4. We need to get the existing rules, so we don't overwrite other user customizations.
-  // The 'inspect' method gives us the value from all configuration targets (User, Workspace, etc.).
   const existingRules =
     editorConfig.inspect<any>('semanticTokenColorCustomizations')?.globalValue || {}
 
-  // 5. Define our new rule for 'promiseFunction'.
   const newRule = {
     promiseFunction: colorValue,
   }
 
-  // 6. Merge our rule with existing rules. This ensures we don't delete other customizations.
   const finalRules = {
     ...existingRules,
     rules: {
@@ -39,68 +31,96 @@ function updateColorConfiguration() {
     },
   }
 
-  // 7. Update the 'semanticTokenColorCustomizations' setting at the Global level.
-  // This programmatically changes the user's settings.json file to apply the color.
   editorConfig.update(
     'semanticTokenColorCustomizations',
     finalRules,
     vscode.ConfigurationTarget.Global
   )
 
-  console.log(`Promise function color updated to: ${colorValue}`)
+  logger.info(`Promise function color updated to: ${colorValue}`)
 }
 
-// This method is called when your extension is activated.
+/**
+ * Shows a welcome message for first-time users (simple version)
+ */
+async function showWelcomeMessage(context: vscode.ExtensionContext) {
+  const hasShownWelcome = context.globalState.get('hasShownWelcome', false)
+
+  if (!hasShownWelcome) {
+    logger.info('First-time activation detected, showing welcome message')
+
+    vscode.window
+      .showInformationMessage(
+        '🎉 Promise Colorizer is now active! Promise-returning functions will be highlighted in purple. You can customize the color in settings.',
+        'Open Settings'
+      )
+      .then((action) => {
+        if (action === 'Open Settings') {
+          vscode.commands.executeCommand('workbench.action.openSettings', 'promiseColorizer')
+        }
+      })
+
+    // Mark that we've shown the welcome message
+    await context.globalState.update('hasShownWelcome', true)
+    logger.info('Welcome message shown and state updated')
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Congratulations, your extension "js-promise-function-colorizer" is now active!')
+  // Force logger initialization immediately (creates output channel)
+  Logger.initialize()
+  logger.info('Promise Colorizer extension activated')
 
-  // --- Main Logic ---
+  showWelcomeMessage(context).catch((error) => {
+    logger.error('Failed to show welcome message', error)
+  })
 
-  // 1. Apply the color immediately on activation.
-  updateColorConfiguration()
+  // Apply the color immediately on activation
+  try {
+    updateColorConfiguration()
+    logger.info('Initial color configuration applied')
+  } catch (error) {
+    logger.error('Failed to apply initial color configuration', error)
+  }
 
-  // 2. Register a listener for when the configuration changes.
-  // This ensures that if the user changes the color in settings, it updates live.
+  // Register a listener for configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((event) => {
-      // Check if the change affects our specific setting.
-      // Note the corrected configuration name 'promiseColorizer.color'.
       if (event.affectsConfiguration('promiseColorizer.color')) {
-        // If it does, re-run our update function to apply the new color.
-        updateColorConfiguration()
+        logger.info('Color configuration changed, updating...')
+        try {
+          updateColorConfiguration()
+        } catch (error) {
+          logger.error('Failed to update color configuration', error)
+        }
       }
     })
   )
 
-  // 3. Register the semantic tokens provider.
-  // This is what actually does the code analysis and highlighting.
-  const selector = [
+  // Register the semantic tokens provider
+  const selector: vscode.DocumentSelector = [
     { language: 'javascript', scheme: 'file' },
     { language: 'typescript', scheme: 'file' },
     { language: 'javascriptreact', scheme: 'file' },
     { language: 'typescriptreact', scheme: 'file' },
   ]
 
-  context.subscriptions.push(
-    vscode.languages.registerDocumentSemanticTokensProvider(
-      selector,
-      new DocumentSemanticTokensProvider(),
-      legend
+  try {
+    context.subscriptions.push(
+      vscode.languages.registerDocumentSemanticTokensProvider(
+        selector,
+        new DocumentSemanticTokensProvider(),
+        legend
+      )
     )
-  )
+    logger.info('Semantic token provider registered successfully for TS/JS files')
+  } catch (error) {
+    logger.error('Failed to register semantic token provider', error)
+  }
 
-  // --- Boilerplate Command (can be kept or removed) ---
-  const disposable = vscode.commands.registerCommand(
-    'js-promise-function-colorizer.helloWorld',
-    () => {
-      vscode.window.showInformationMessage('Hello from js-promise-function-colorizer!')
-    }
-  )
-  context.subscriptions.push(disposable)
+  logger.info('Promise Colorizer extension activation completed')
 }
 
-// This method is called when your extension is deactivated.
 export function deactivate() {
-  // It's good practice to clean up the setting when the extension is deactivated,
-  // though not strictly necessary. For simplicity, we'll leave it as is for now.
+  logger.info('Promise Colorizer extension deactivated')
 }
