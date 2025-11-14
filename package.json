@@ -1,8 +1,8 @@
 {
   "name": "js-promise-function-colorizer",
-  "displayName": "javaScript Promise Function Colorizer",
+  "displayName": "JavaScript Promise Function Colorizer",
   "description": "Highlights JavaScript/Typescript function that return promises with a custom color.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "cortezdev",
   "author": {
     "name": "Victor Cortez",
