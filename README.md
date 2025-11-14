@@ -7,17 +7,28 @@ Disclaimer: AI was heavily used when making this, and there are no unit tests wr
 
 ## Features
 
-Highlights functions in JavaScript/Typescript that return promises with a custom color
+Automatically detects promise-returning functions and calls
+
+- Highlights functions in JavaScript/Typescript that return promises with a custom color
+- Works with JavaScript, TypeScript, JSX, and TSX files
 
 ## Requirements
 
-Depends on VSCode's typescript-language-features
+Depends on VSCode's typescript-language-features being enabled
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
 - `promiseColorizer.color`: The color to use for functions that return a Promise. This must be a hex color code.
+
+Example
+
+```json
+{
+  "promiseColorizer.color": "#B19CD9"
+}
+```
 
 ## Known Issues
 

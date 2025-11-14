@@ -1,14 +1,41 @@
 {
   "name": "js-promise-function-colorizer",
-  "displayName": "javaScript promise function colorizer",
-  "description": "Highlights functions in JavaScript/Typescript that return promises with a custom color. Use the promiseColorizer.color setting to customize the color.",
-  "version": "0.0.1",
+  "displayName": "javaScript Promise Function Colorizer",
+  "description": "Highlights JavaScript/Typescript function that return promises with a custom color.",
+  "version": "0.2.0",
+  "publisher": "cortezdev",
+  "author": {
+    "name": "Victor Cortez",
+    "email": "cortezdevpubli@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vicortez/js-promise-function-colorizer"
+  },
+  "bugs": {
+    "url": "https://github.com/vicortez/js-promise-function-colorizer/issues"
+  },
+  "homepage": "https://github.com/vicortez/js-promise-function-colorizer#readme",
+  "galleryBanner": {
+    "color": "#AF69EE",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": [
     "Programming Languages",
     "Themes"
+  ],
+  "keywords": [
+    "promise",
+    "async",
+    "javascript",
+    "typescript",
+    "syntax highlighting",
+    "colorizer",
+    "semantic tokens"
   ],
   "activationEvents": [
     "onLanguage:javascript",
@@ -24,7 +51,7 @@
         "promiseColorizer.color": {
           "type": "string",
           "format": "color",
-          "default": "#C586C0",
+          "default": "#AF69EE",
           "description": "The color to use for functions that return a Promise. This must be a hex color code."
         }
       }
