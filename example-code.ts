@@ -1,14 +1,20 @@
-const aaaa = async () => {
-  return new Promise()
+// ==================== POSITIVE CASES (Should be highlighted) ====================
+function aa() {
+  return fetch('/test')
 }
 
-aaaa()
-// ==================== POSITIVE CASES (Should be highlighted) ====================
+aa()
+const someFunc = async () => {}
+const blogService = { someFunc }
+
+blogService.someFunc() // <- should highlight
+someFunc()
 
 // 1. Async function declarations
-async function fetchUserData() {
-  return await fetch('/api/user')
+const aaaa = async () => {
+  return 'a'
 }
+aaaa()
 
 async function processData(data: any) {
   return data.map((x) => x.value)

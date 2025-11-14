@@ -40,7 +40,7 @@ Example
 
 <!-- - None ATM -->
 
-- Doesn't seem to be working with method calls from non-class object instances
+- Doesn't work with method calls from non-class object instances imported from some modules
 
   ```
   const user = userEvent.setup()
@@ -51,3 +51,7 @@ Example
 ## Releasing
 
 `npx vsce package`
+
+or
+
+`vsce publish --pre-release`

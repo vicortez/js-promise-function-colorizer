@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/vicortez/js-promise-function-colorizer#readme",
   "galleryBanner": {
-    "color": "#AF69EE",
+    "color": "#af89e9",
     "theme": "dark"
   },
   "engines": {
@@ -51,7 +51,7 @@
         "promiseColorizer.color": {
           "type": "string",
           "format": "color",
-          "default": "#AF69EE",
+          "default": "#af89e9",
           "description": "The color to use for functions that return a Promise. This must be a hex color code."
         }
       }
