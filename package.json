@@ -2,7 +2,7 @@
   "name": "js-promise-function-colorizer",
   "displayName": "JavaScript Promise Function Colorizer",
   "description": "Highlights JavaScript/TypeScript functions that return promises with a custom color.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "cortezdev",
   "author": {
     "name": "Victor Cortez",
@@ -53,6 +53,16 @@
           "format": "color",
           "default": "#af89e9",
           "description": "The color to use for functions that return a Promise. This must be a hex color code."
+        },
+        "promiseColorizer.detectionMethod": {
+          "type": "string",
+          "enum": [
+            "hybrid",
+            "heuristic",
+            "tsc"
+          ],
+          "default": "hybrid",
+          "description": "The method for detecting promise-returning functions.\n- 'hybrid': Uses heuristics then falls back to TypeScript analysis for improved accuracy.\n- 'heuristic': Faster, but less accurate. Relies on `async` keywords, explicit `Promise` return types, and simple `return new Promise` patterns. Recommended for large codebases or for better performance.\n- 'tsc': Slower, but works across modules. Uses the TypeScript compiler API to perform full type analysis."
         }
       }
     },

@@ -38,15 +38,7 @@ Example
 
 ## Known Issues
 
-<!-- - None ATM -->
-
-- Doesn't work with method calls from non-class object instances imported from some modules
-
-  ```
-  const user = userEvent.setup()
-  // should highlight
-  await user.click(btn)
-  ```
+- None ATM
 
 ## Releasing
 
