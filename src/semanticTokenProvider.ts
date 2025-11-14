@@ -9,11 +9,18 @@ export const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers
 export class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
   private readonly promiseReturningFunctions = new Set<string>()
   private readonly promiseReturningMethods = new Map<string, Set<string>>()
+  // Track instance variables to their class types
+  private readonly instanceToClass = new Map<string, string>()
 
   public async provideDocumentSemanticTokens(
     document: vscode.TextDocument,
     token: vscode.CancellationToken
   ): Promise<vscode.SemanticTokens> {
+    // Clear previous collections
+    this.promiseReturningFunctions.clear()
+    this.promiseReturningMethods.clear()
+    this.instanceToClass.clear()
+
     const tokensBuilder = new vscode.SemanticTokensBuilder(legend)
     const sourceFile = ts.createSourceFile(
       document.fileName,
@@ -22,13 +29,30 @@ export class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTo
       true
     )
 
-    // First pass: collect promise-returning function definitions
+    // First pass: collect promise-returning function definitions AND instance variables
     this.collectPromiseFunctions(sourceFile)
+    this.collectInstanceVariables(sourceFile)
 
     // Second pass: highlight both definitions and calls
     this.visit(sourceFile, tokensBuilder, document)
 
     return tokensBuilder.build()
+  }
+
+  private collectInstanceVariables(node: ts.Node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      node.initializer &&
+      ts.isNewExpression(node.initializer)
+    ) {
+      if (ts.isIdentifier(node.name) && ts.isIdentifier(node.initializer.expression)) {
+        const variableName = node.name.text
+        const className = node.initializer.expression.text
+        this.instanceToClass.set(variableName, className)
+      }
+    }
+
+    ts.forEachChild(node, (childNode) => this.collectInstanceVariables(childNode))
   }
 
   private collectPromiseFunctions(node: ts.Node) {
@@ -214,9 +238,20 @@ export class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTo
       const objectExpression = node.expression.expression
       if (ts.isIdentifier(objectExpression)) {
         const objectName = objectExpression.text
-        const methods = this.promiseReturningMethods.get(objectName)
+
+        // First check if this is a direct class reference (e.g., DataService.staticMethod())
+        let methods = this.promiseReturningMethods.get(objectName)
         if (methods && methods.has(methodName)) {
           return true
+        }
+
+        // Then check if this is an instance variable (e.g., service.method())
+        const className = this.instanceToClass.get(objectName)
+        if (className) {
+          methods = this.promiseReturningMethods.get(className)
+          if (methods && methods.has(methodName)) {
+            return true
+          }
         }
       }
 

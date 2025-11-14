@@ -1,5 +1,7 @@
 # js-promise-function-colorizer extension for VSCode
 
+Highlights JavaScript/Typescript function that return promises with a custom color. You can customize the color using the `promiseColorizer.color` config.
+
 - TODO
   - add image/gif
   - add icon
@@ -27,7 +29,7 @@ Example
 
 ```json
 {
-  "promiseColorizer.color": "#B19CD9"
+  "promiseColorizer.color": "#AF69EE"
 }
 ```
 
