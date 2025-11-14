@@ -38,7 +38,15 @@ Example
 
 ## Known Issues
 
-- None ATM
+<!-- - None ATM -->
+
+- Doesn't seem to be working with method calls from non-class object instances
+
+  ```
+  const user = userEvent.setup()
+  // should highlight
+  await user.click(btn)
+  ```
 
 ## Releasing
 
