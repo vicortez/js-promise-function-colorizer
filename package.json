@@ -1,0 +1,59 @@
+{
+  "name": "js-promise-function-colorizer",
+  "displayName": "javaScript promise function colorizer",
+  "description": "Highlights functions in JavaScript/Typescript that return promises with a custom color. Use the promiseColorizer.color setting to customize the color.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Themes"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Promise Function Colorizer",
+      "properties": {
+        "promiseColorizer.color": {
+          "type": "string",
+          "format": "color",
+          "default": "#C586C0",
+          "description": "The color to use for functions that return a Promise. This must be a hex color code."
+        }
+      }
+    },
+    "semanticTokenTypes": [
+      {
+        "id": "promiseFunction",
+        "description": "A function that returns a Promise."
+      }
+    ],
+    "semanticTokenModifiers": []
+  },
+  "extensionDependencies": [
+    "vscode.typescript-language-features"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-electron": "^2.3.8"
+  }
+}
